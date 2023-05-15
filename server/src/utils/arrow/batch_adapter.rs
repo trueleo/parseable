@@ -27,8 +27,8 @@ use std::sync::Arc;
 // current schema of the log stream. It returns a new record
 // with nulls added to the fields that don't exist
 // in the record batch (i.e. the event) but are present in the
-// log stream schema. 
-// This is necessary because all the record batches in a log 
+// log stream schema.
+// This is necessary because all the record batches in a log
 // stream need to have all the fields.
 pub fn adapt_batch(table_schema: &Schema, batch: RecordBatch) -> RecordBatch {
     let batch_schema = &*batch.schema();

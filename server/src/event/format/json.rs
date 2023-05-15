@@ -25,10 +25,13 @@ use arrow_json::reader::{infer_json_schema_from_iterator, Decoder, DecoderOption
 use arrow_schema::{DataType, Field, Schema};
 use datafusion::arrow::util::bit_util::round_upto_multiple_of_64;
 use serde_json::Value;
-use std::{collections::{HashMap, HashSet}, sync::Arc};
+use std::{
+    collections::{HashMap, HashSet},
+    sync::Arc,
+};
 
 use super::EventFormat;
-use crate::utils::{json::flatten_json_body,arrow::get_field};
+use crate::utils::{arrow::get_field, json::flatten_json_body};
 
 pub struct Event {
     pub data: Value,
@@ -116,7 +119,10 @@ impl EventFormat for Event {
 
 // Returns arrow schema with the fields that are present in the request body
 // This schema is an input to convert the request body to arrow record batch
-fn derive_arrow_schema(schema: &HashMap<String, Field>, fields: HashSet<&str>) -> Result<Schema, ()> {
+fn derive_arrow_schema(
+    schema: &HashMap<String, Field>,
+    fields: HashSet<&str>,
+) -> Result<Schema, ()> {
     let mut res = Vec::with_capacity(fields.len());
     let fields = fields.into_iter().map(|field_name| schema.get(field_name));
 
