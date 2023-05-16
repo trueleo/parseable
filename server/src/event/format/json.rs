@@ -119,27 +119,27 @@ impl EventFormat for Event {
 
 // Returns arrow schema with the fields that are present in the request body
 // This schema is an input to convert the request body to arrow record batch
-fn derive_arrow_schema(
-    schema: &HashMap<String, Field>,
-    fields: HashSet<&str>,
-) -> Result<Schema, ()> {
+fn derive_arrow_schema(schema: &HashMap<String, Field>, fields: Vec<&str>) -> Result<Schema, ()> {
     let mut res = Vec::with_capacity(fields.len());
     let fields = fields.into_iter().map(|field_name| schema.get(field_name));
-
     for field in fields {
         let Some(field) = field else { return Err(()) };
         res.push(field.clone())
     }
-
     Ok(Schema::new(res))
 }
 
-fn collect_keys<'a>(values: impl Iterator<Item = &'a Value>) -> Result<HashSet<&'a str>, ()> {
-    let mut keys = HashSet::new();
+fn collect_keys<'a>(values: impl Iterator<Item = &'a Value>) -> Result<Vec<&'a str>, ()> {
+    let mut keys = Vec::new();
     for value in values {
         if let Some(obj) = value.as_object() {
             for key in obj.keys() {
-                keys.insert(key.as_str());
+                match keys.binary_search(&key.as_str()) {
+                    Ok(_) => (),
+                    Err(pos) => {
+                        keys.insert(pos, key.as_str());
+                    }
+                }
             }
         } else {
             return Err(());
