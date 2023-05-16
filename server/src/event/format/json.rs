@@ -25,10 +25,7 @@ use arrow_json::reader::{infer_json_schema_from_iterator, Decoder, DecoderOption
 use arrow_schema::{DataType, Field, Schema};
 use datafusion::arrow::util::bit_util::round_upto_multiple_of_64;
 use serde_json::Value;
-use std::{
-    collections::{HashMap},
-    sync::Arc,
-};
+use std::{collections::HashMap, sync::Arc};
 
 use super::EventFormat;
 use crate::utils::{arrow::get_field, json::flatten_json_body};
